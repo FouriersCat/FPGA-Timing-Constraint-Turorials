@@ -4,8 +4,11 @@
 
 公众号：傅里叶的猫，专注于FPGA、硬件加速、信号处理
 
-<img src="https://technomania.oss-cn-shanghai.aliyuncs.com/image-20240110222821576.png" alt="image-20240110222821576" style="zoom:50%;" />
+<center>
+	
+<img src="https://technomania.oss-cn-shanghai.aliyuncs.com/image-20240110222821576.png" alt="image-20240110222821576" style="zoom:20%;" />
 
+</center>
 
 
 - [前言](#前言)
