@@ -12,15 +12,6 @@
 
 
 
-# FPGA时序约束教程（持续更新）
-
-公众号：傅里叶的猫，专注于FPGA、硬件加速、信号处理
-
-<img src="https://technomania.oss-cn-shanghai.aliyuncs.com/image-20240110222821576.png" alt="image-20240110222821576" style="zoom:40%;" />
-
-
-
-
 
 
 - [FPGA时序约束教程（持续更新）](#fpga时序约束教程持续更新)
