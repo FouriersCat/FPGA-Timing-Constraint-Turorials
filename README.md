@@ -11,6 +11,19 @@
 </center>
 
 
+
+# FPGA时序约束教程（持续更新）
+
+公众号：傅里叶的猫，专注于FPGA、硬件加速、信号处理
+
+<img src="https://technomania.oss-cn-shanghai.aliyuncs.com/image-20240110222821576.png" alt="image-20240110222821576" style="zoom:40%;" />
+
+
+
+
+
+
+- [FPGA时序约束教程（持续更新）](#fpga时序约束教程持续更新)
 - [前言](#前言)
 - [读万卷书--时序约束理论篇](#读万卷书--时序约束理论篇)
   - [1. 周期约束理论](#1-周期约束理论)
@@ -39,8 +52,21 @@
   - [2. cell](#2-cell)
   - [3. pin](#3-pin)
   - [4. net](#4-net)
-
-
+- [FPGA的虚拟时钟如何使用？](#fpga的虚拟时钟如何使用)
+- [set\_input\_delay如何使用](#set_input_delay如何使用)
+  - [什么是input\_delay？](#什么是input_delay)
+  - [set\_input\_delay语法](#set_input_delay语法)
+  - [Vivado Timing Constraints Wizard](#vivado-timing-constraints-wizard)
+  - [Examples](#examples)
+  - [具体案例](#具体案例)
+- [set\_output\_delay如何使用](#set_output_delay如何使用)
+  - [什么是output\_delay？](#什么是output_delay)
+  - [set\_output\_delay语法](#set_output_delay语法)
+  - [Vivado Timing Constraints Wizard](#vivado-timing-constraints-wizard-1)
+  - [Examples](#examples-1)
+  - [具体案例](#具体案例-1)
+- [set\_input\_delay中-add\_delay的作用](#set_input_delay中-add_delay的作用)
+- [经过时钟选择器该怎么约束](#经过时钟选择器该怎么约束)
 
 
 # 前言
@@ -74,6 +100,7 @@
 <center>
 
 
+
 ![image](https://raw.githubusercontent.com/Bounce00/pic/master/fpga/timing_toturial0.png)
 
 </center>
@@ -81,6 +108,7 @@
 建立和保持时间是由器件特性决定了，当我们决定了使用哪个FPGA，就意味着建立和保持时间也就确定了。Xilinx FPGA的setup time基本都在0.04ns的量级，hold time基本在0.2ns的量级，不同器件会有所差异，具体可以查对应器件的DC and AC Switching Characteristics，下图列出K7系列的建立保持时间。
 
 <center>
+
 
 
 ![image](https://raw.githubusercontent.com/Bounce00/pic/master/fpga/timing_toturial1.png)
@@ -125,6 +153,7 @@ Tclk ≥ Tco＋Tlogic＋Trouting＋Tsetup - Tskew   \tag{公式1}
 <center>
 
 
+
 ![image](https://raw.githubusercontent.com/Bounce00/pic/master/fpga/timing_toturial3.png)
 
 
@@ -147,9 +176,11 @@ Tdata\_path + Tsetup <= Tclk\_path + Tclk \tag{公式2}
 
 
 
+
 &emsp;&emsp;reg2在边沿2时刻刚刚捕获reg1在边沿1时刻发出的数据，若reg1在边沿2时刻发出的数据过快到达reg2，则会冲掉前面的数据。因此保持时间约束的是同一个边沿。
 
 <center>
+
 
 
 ![image](https://raw.githubusercontent.com/Bounce00/pic/master/fpga/timing_toturial5.png)
@@ -217,6 +248,7 @@ set_property -dict {PACKAGE_PIN AJ16  IOSTANDARD  LVCMOS18} [get_ports "led[0]" 
 <center>
 
 
+
 ![image](https://raw.githubusercontent.com/Bounce00/pic/master/fpga/timing_toturial6.png)
 
 </center>
@@ -226,6 +258,7 @@ set_property -dict {PACKAGE_PIN AJ16  IOSTANDARD  LVCMOS18} [get_ports "led[0]" 
 &emsp;&emsp;当综合完成后，我们可以点击DRC，进行设计规则检查，这一步可以报出一些关键问题，比如时钟端口未分配在时钟引脚上等。
 
 <center>
+
 
 
 ![image](https://raw.githubusercontent.com/Bounce00/pic/master/fpga/timing_toturial7.png)
@@ -244,6 +277,7 @@ set_property -dict {PACKAGE_PIN AJ16  IOSTANDARD  LVCMOS18} [get_ports "led[0]" 
 &emsp;&emsp;这个约束跟ISE中的`OFFSET=IN`功能相同，但设置方式不同。下图所示即为input delay的约束说明图。
 
 <center>
+
 
 
 ![image](https://raw.githubusercontent.com/Bounce00/pic/master/fpga/timing_toturial8.png)
@@ -304,6 +338,7 @@ create_clock -name <name> -period <period> -waveform {<rise_time> <fall_time>} [
 <center>
 
 
+
 ![image](https://raw.githubusercontent.com/Bounce00/pic/master/fpga/timing_toturial9.png)
 
 </center>
@@ -315,6 +350,7 @@ create_clock -name <name> -period <period> -waveform {<rise_time> <fall_time>} [
 <center>
 
 
+
 ![image](https://raw.githubusercontent.com/Bounce00/pic/master/fpga/timing_toturial10.png)
 
 </center>
@@ -322,6 +358,7 @@ create_clock -name <name> -period <period> -waveform {<rise_time> <fall_time>} [
 把工程的xdc文件中，`create_clock`的几项都注释掉。这里解释下端口（Port）和管脚（Pin）。端口通常用get_ports命令获取，管脚使用get_pins命令获取。
 
 <center>
+
 
 
 ![image](https://raw.githubusercontent.com/Bounce00/pic/master/fpga/timing_toturial11.png)
@@ -337,6 +374,7 @@ create_clock -name <name> -period <period> -waveform {<rise_time> <fall_time>} [
 <center>
 
 
+
 ![image](https://raw.githubusercontent.com/Bounce00/pic/master/fpga/timing_toturial12.png)
 
 </center>
@@ -345,6 +383,7 @@ create_clock -name <name> -period <period> -waveform {<rise_time> <fall_time>} [
    运行tcl指令`check_timing -override_defaults no_clock`，显示结果如下：
 
 <center>
+
 
 
 ![image](https://raw.githubusercontent.com/Bounce00/pic/master/fpga/timing_toturial13.png)
@@ -372,6 +411,7 @@ create_clock -name gt6_txusrclk_i -period 12.8 [get_pins mgtEngine/ROCKETIO_WRAP
 &emsp;&emsp;当系统中有多个主时钟，且这几个主时钟之间存在确定的相位关系时，需要用到`-waveform`参数。如果有两个主时钟，如下图所示。
 
 <center>
+
 
 
 ![image](https://raw.githubusercontent.com/Bounce00/pic/master/fpga/timing_toturial14.png)
@@ -456,13 +496,14 @@ create_generated_clock -name <generated_clock_name> \
 
 &emsp;&emsp;**衍生时钟**又分两种情况：
 
-  1. Vivado自动推导的衍生时钟
-  2. 用户自定义的衍生时钟
+    1. Vivado自动推导的衍生时钟
+    2. 用户自定义的衍生时钟
 
 &emsp;&emsp;首先来看第一种，如果使用PLL或者MMCM，则Vivado会自动推导出一个约束。大家可以打开Vivado中有个叫`wavegen`的工程，在这个工程中，输入时钟经过PLL输出了2个时钟，如下图所示。
 （补充：关于DCM/DLL/PLL/MMCM的区别，可参考我写的另一篇文章[DCM/DLL/PLL/MMCM区别](https://mp.weixin.qq.com/s?__biz=MzU4ODY5ODU5Ng==&mid=2247484106&idx=1&sn=82983a8086732717298436e067a64d4d&chksm=fdd98441caae0d57c99c5b22cf72bfaee2372824406014680be9df1f8d85b3071182fe43656c&mpshare=1&scene=1&srcid=0928ySJ3ud0vfaGS85Teu5Xw&sharer_sharetime=1571051171309&sharer_shareid=296cfe717a7da125d89d5a7bcdf65c18&key=6234e09828e71f223a5bbb62942587523cffdc550c50d6713403e50f0f1a03c87c5b1a6fae054a425e6f27eabfd6e48eb8fd421c5841d8d8b3b054113d8e8650ff4a65e51fa211ebe10dc0a436635167&ascene=1&uin=MzkzMzM2Nzc1&devicetype=Windows+7&version=62070141&lang=zh_CN&pass_ticket=b15xLCDB%2FBp7ALLPd%2FcqR3Z4qIXNCYrUowj5c4g9AzKzb29vj6R%2F%2BP8z8RJvomTk)
 
 <center>
+
 
 
 ![image](https://raw.githubusercontent.com/Bounce00/pic/master/fpga/timing_toturial15.png)
@@ -473,6 +514,7 @@ create_generated_clock -name <generated_clock_name> \
 &emsp;&emsp;但在xdc文件中，并未对这2个输出时钟进行约束，只对输入的时钟进行了约束，若我们使用`report_clocks`指令，则会看到：
 
 <center>
+
 
 
 ![image](https://raw.githubusercontent.com/Bounce00/pic/master/fpga/timing_toturial16.png)
@@ -527,6 +569,7 @@ set_clock_groups -asynchronous -group "clk1A clk1B clk1C" -group clk2
 <center>
 
 
+
 ![image](https://raw.githubusercontent.com/Bounce00/pic/master/fpga/timing_toturial17.png)
 </center>
 
@@ -558,6 +601,7 @@ set_clock_groups -logically_exclusive \
 <center>
 
 
+
 ![image](https://raw.githubusercontent.com/Bounce00/pic/master/fpga/timing_toturial18.png)
 
 </center>
@@ -580,7 +624,7 @@ set_input_delay 2 -clock virclk [get_ports B]
 注意，虚拟时钟必须在约束I/O延迟之前被定义。
 
 
-  5. 最大最小延迟约束
+    5. 最大最小延迟约束
 
 &emsp;&emsp;顾名思义，就是设置路径的max/min delay，主要应用场景有两个：
 
@@ -588,6 +632,7 @@ set_input_delay 2 -clock virclk [get_ports B]
  - 异步电路之间的最大最小延迟
 
 <center>
+
 
 
 ![image](https://raw.githubusercontent.com/Bounce00/pic/master/fpga/timing_toturial19.png)
@@ -620,6 +665,7 @@ set_min_delay <delay> [-from <node_list>] [-to <node_list>][-through <node_list>
 
 
 <center>
+
 
 
 ![image](https://raw.githubusercontent.com/Bounce00/pic/master/fpga/timing_toturial20.png)
@@ -670,6 +716,7 @@ set_multicycle_path <num_cycles> [-setup|-hold] [-start|-end][-from <startpoints
 <center>
 
 
+
 ![image](https://raw.githubusercontent.com/Bounce00/pic/master/fpga/timing_toturial21.png)
 
 </center>
@@ -679,6 +726,7 @@ set_multicycle_path <num_cycles> [-setup|-hold] [-start|-end][-from <startpoints
 <center>
 
 
+
 ![image](https://raw.githubusercontent.com/Bounce00/pic/master/fpga/timing_toturial22.png)
 
 </center>
@@ -686,6 +734,7 @@ set_multicycle_path <num_cycles> [-setup|-hold] [-start|-end][-from <startpoints
 &emsp;&emsp;若我们没有指定任何的约束，默认的建立/保持时间的分析就像我们上面所讲的单周期路径，如下图所示。
 
 <center>
+
 
 
 ![image](https://raw.githubusercontent.com/Bounce00/pic/master/fpga/timing_toturial23.png)
@@ -703,6 +752,7 @@ set_multicycle_path 2 -setup -from [get_pins data0_reg/C] -to [get_pins data1_re
 在建立时间被修改后，保持时间也会自动调整到捕获时钟沿的前一个时钟沿，如下图所示。
 
 <center>
+
 
 
 ![image](https://raw.githubusercontent.com/Bounce00/pic/master/fpga/timing_toturial24.png)
@@ -727,6 +777,7 @@ set_multicycle_path 1 -hold  -from [get_pins data0_reg/C]  -to [get_pins data1_r
 <center>
 
 
+
 ![image](https://raw.githubusercontent.com/Bounce00/pic/master/fpga/timing_toturial25.png)
 </center>
 
@@ -743,6 +794,7 @@ set_multicycle_path N-1 -hold  -from [get_pins data0_reg/C]  -to [get_pins data1
 <center>
 
 
+
 ![image](https://raw.githubusercontent.com/Bounce00/pic/master/fpga/timing_toturial26.png)
 
 </center>
@@ -750,6 +802,7 @@ set_multicycle_path N-1 -hold  -from [get_pins data0_reg/C]  -to [get_pins data1
 &emsp;&emsp;前面我们讨论的是在单时钟域下，发送端和接收端时钟是同频同相的，如果两个时钟同频不同相怎么处理？
 
 <center>
+
 
 
 ![image](https://raw.githubusercontent.com/Bounce00/pic/master/fpga/timing_toturial27.png)
@@ -769,12 +822,14 @@ set_multicycle_path 2 -setup -from [get_clocks CLK1] -to [get_clocks CLK2]
 <center>
 
 
+
 ![image](https://raw.githubusercontent.com/Bounce00/pic/master/fpga/timing_toturial28.png)
 </center>
 
 &emsp;&emsp;那如果接收端的时钟比发送端的时钟超前了怎么处理？
 
 <center>
+
 
 
 ![image](https://raw.githubusercontent.com/Bounce00/pic/master/fpga/timing_toturial29.png)
@@ -790,6 +845,7 @@ set_multicycle_path 2 -setup -from [get_clocks CLK1] -to [get_clocks CLK2]
 <center>
 
 
+
 ![image](https://raw.githubusercontent.com/Bounce00/pic/master/fpga/timing_toturial30.png)
 </center>
 
@@ -797,6 +853,7 @@ set_multicycle_path 2 -setup -from [get_clocks CLK1] -to [get_clocks CLK2]
 &emsp;&emsp;假设捕获时钟频率是发起时钟频率的3倍，在没有任何约束的情况下，Vivado默认会按照如下图所示的建立保持时间进行分析。
 
 <center>
+
 
 
 ![image](https://raw.githubusercontent.com/Bounce00/pic/master/fpga/timing_toturial31.png)
@@ -820,6 +877,7 @@ set_multicycle_path 2 -hold -end -from [get_clocks CLK1] -to [get_clocks CLK2]
 <center>
 
 
+
 ![image](https://raw.githubusercontent.com/Bounce00/pic/master/fpga/timing_toturial32.png)
 </center>
 
@@ -835,12 +893,14 @@ set_multicycle_path 2 -hold -end -from [get_clocks CLK1] -to [get_clocks CLK2]
 <center>
 
 
+
 ![image](https://raw.githubusercontent.com/Bounce00/pic/master/fpga/timing_toturial33.png)
 </center>
 
 &emsp;&emsp;假设发起时钟频率是捕获时钟频率的3倍，在没有任何约束的情况下，Vivado默认会按照如下图所示的建立保持时间进行分析。
 
 <center>
+
 
 
 ![image](https://raw.githubusercontent.com/Bounce00/pic/master/fpga/timing_toturial34.png)
@@ -858,12 +918,14 @@ set_multicycle_path 2 -hold -from [get_clocks CLK1] -to [get_clocks CLK2]
 <center>
 
 
+
 ![image](https://raw.githubusercontent.com/Bounce00/pic/master/fpga/timing_toturial35.png)
 </center>
 
 针对上面讲的几种多周期路径，总结如下：
 
 <center>
+
 
 
 ![image](https://raw.githubusercontent.com/Bounce00/pic/master/fpga/timing_toturial36.png)
@@ -931,28 +993,28 @@ set_clock_groups -async -group [get_clocks clk1] -to [get_clocks clk2]
 
 时序例外的优先级从高到低为：
 
-  1. Clock Groups (set_clock_groups)
-  2. False Path (set_false_path)
-  3. Maximum Delay Path (set_max_delay) and Minimum Delay Path (set_min_delay)
-  4. Multicycle Paths (set_multicycle_path)
+    1. Clock Groups (set_clock_groups)
+    2. False Path (set_false_path)
+    3. Maximum Delay Path (set_max_delay) and Minimum Delay Path (set_min_delay)
+    4. Multicycle Paths (set_multicycle_path)
 
 
 `set_bus_skew`约束并不影响上述优先级且不与上述约束冲突。原因在于set_bus_skew并不是某条路径上的约束，而是路径与路径之间的约束。
 
 &emsp;&emsp;对于同样的约束，定义的越精细，优先级越高。各对象的约束优先级从高到低位：
 
-  1. ports->pins->cells
-  2. clocks。
+    1. ports->pins->cells
+    2. clocks。
 
 &emsp;&emsp;路径声明的优先级从高到低位：
 
-  1. -from -through -to
-  2. -from -to
-  3. -from -through
-  4. -from
-  5. -through -t
-  6. -to
-  7. -through。
+    1. -from -through -to
+    2. -from -to
+    3. -from -through
+    4. -from
+    5. -through -t
+    6. -to
+    7. -through。
 
 ***优先考虑对象，再考虑路径。***
 
@@ -999,6 +1061,7 @@ set_max_delay 4 -through [get_pins inst0/I0] -through [get_pins inst1/I3]
 <center>
 
 
+
 ![image](https://raw.githubusercontent.com/Bounce00/pic/master/fpga/timing_toturial37.png)
 </center>
 
@@ -1012,6 +1075,7 @@ set_max_delay 4 -through [get_pins inst0/I0] -through [get_pins inst1/I3]
 &emsp;&emsp;在我们这个工程中，有两个主时钟，四个衍生时钟，如下图所示。
 
 <center>
+
 
 
 ![image](https://raw.githubusercontent.com/Bounce00/pic/master/fpga/timing_toturial38.png)
@@ -1030,6 +1094,7 @@ set_max_delay 4 -through [get_pins inst0/I0] -through [get_pins inst1/I3]
 <center>
 
 
+
 ![image](https://raw.githubusercontent.com/Bounce00/pic/master/fpga/timing_toturial39.png)
 </center>
 
@@ -1045,6 +1110,7 @@ set_max_delay 4 -through [get_pins inst0/I0] -through [get_pins inst1/I3]
 <center>
 
 
+
 ![image](https://raw.githubusercontent.com/Bounce00/pic/master/fpga/timing_toturial40.png)
 </center>
 
@@ -1054,6 +1120,7 @@ set_max_delay 4 -through [get_pins inst0/I0] -through [get_pins inst1/I3]
 &emsp;&emsp;接下来，我们在tcl命令行中输入`report_clock_networks -name main`，显示如下：
 
 <center>
+
 
 
 ![image](https://raw.githubusercontent.com/Bounce00/pic/master/fpga/timing_toturial41.png)
@@ -1074,6 +1141,7 @@ create_clock -name clk2 -period 25 [get_ports clk_in2]
 再执行`report_clock_networks -name main`，显示如下：
 
 <center>
+
 
 
 ![image](https://raw.githubusercontent.com/Bounce00/pic/master/fpga/timing_toturial42.png)
@@ -1100,6 +1168,7 @@ create_generated_clock -name spi_clk -source [get_pins dac_spi_i0/out_ddr_flop_s
 <center>
 
 
+
 ![image](https://raw.githubusercontent.com/Bounce00/pic/master/fpga/timing_toturial43.png)
 </center>
 
@@ -1115,6 +1184,7 @@ create_generated_clock -name clk_rx -source [get_pins clk_gen_i0/clk_core_i0/ins
 把上述的约束指令在tcl中运行后，我们再运行一遍`report_clocks`，显示如下：
 
 <center>
+
 
 
 ![image](https://raw.githubusercontent.com/Bounce00/pic/master/fpga/timing_toturial44.png)
@@ -1134,6 +1204,7 @@ set_clock_groups -asynchronous -group [get_clocks clk_samp] -group [get_clocks c
 <center>
 
 
+
 ![image](https://raw.githubusercontent.com/Bounce00/pic/master/fpga/timing_toturial45.png)
 </center>
 
@@ -1142,6 +1213,7 @@ set_clock_groups -asynchronous -group [get_clocks clk_samp] -group [get_clocks c
 &emsp;&emsp;但其实这种想法是不对的，比如在很多ADC的设计中，输出的时钟的边沿刚好是数据的中心位置，而如果我们不加延迟约束，则Vivado会默认时钟和数据是对齐的。
 
 <center>
+
 
 
 ![image](https://raw.githubusercontent.com/Bounce00/pic/master/fpga/timing_toturial46.png)
@@ -1196,6 +1268,7 @@ set_output_delay -clock spi_clk -min -1.000 [get_ports {spi_mosi_pin dac_cs_n_pi
 <center>
 
 
+
 ![image](https://raw.githubusercontent.com/Bounce00/pic/master/fpga/timing_toturial47.png)
 </center>
 
@@ -1226,13 +1299,14 @@ set_false_path -from [get_ports rst_pin]
 <center>
 
 
+
 ![image](https://raw.githubusercontent.com/Bounce00/pic/master/fpga/timing_toturial48.png)
 </center>
 
 但这可能是Vivado的综合过程中，读取到该约束文件时，内部电路并未全都建好，就出现了没有发现`clk_gen_i0/clk_core_i0/inst/mmcm_adv_inst/CLKIN1`等端口的情况，有如下几点证明：
 
-  1. 若把该xdc文件，设置为仅在Implementation中使用，则不会提示该warning
-  2. 在Implementation完成后，无论是Timing Report还是通过tcl的`report_clocks`指令，都可以看到这几个时钟已经被正确约束。下图所示即为设置完上面的约束后的Timing Report。
+    1. 若把该xdc文件，设置为仅在Implementation中使用，则不会提示该warning
+    2. 在Implementation完成后，无论是Timing Report还是通过tcl的`report_clocks`指令，都可以看到这几个时钟已经被正确约束。下图所示即为设置完上面的约束后的Timing Report。
 
 
 
@@ -1243,7 +1317,7 @@ set_false_path -from [get_ports rst_pin]
 
 &emsp;&emsp;多周期路径，我们一般按照以下4个步骤来约束：
 
-  1. 带有使能的数据
+    1. 带有使能的数据
 
 &emsp;&emsp;首先来看带有使能的数据，在本工程中的Tming Report中，也提示了同一个时钟域之间的几个路径建立时间不满足要求（具体见“5.伪路径约束”的第一个图），其实这几个路径都是带有使能的路径，使能的周期为2倍的时钟周期，本来就应该在2个时钟周期内去判断时序收敛。因此，我们添加时序约束：
 
@@ -1278,19 +1352,19 @@ set_multicycle_path -hold -from [get_cells uart_tx_i0/uart_tx_ctl_i0/* -filter I
 
 约束中的`filter`参数也将在下一章节具体讲解。
 
-  2. 两个有数据交互的时钟之间存在相位差
+    2. 两个有数据交互的时钟之间存在相位差
 
 &emsp;&emsp;在本工程中，没有这种应用场景，因此不需要添加此类约束。
 
 
 
-  3. 存在快时钟到慢时钟的路径
+    3. 存在快时钟到慢时钟的路径
 
 &emsp;&emsp;在本工程中，没有这种应用场景，因此不需要添加此类约束。
 
 
 
-  4. 存在慢时钟到快时钟的路径
+    4. 存在慢时钟到快时钟的路径
 
 &emsp;&emsp;在本工程中，没有这种应用场景，因此不需要添加此类约束。
 
@@ -1342,6 +1416,7 @@ set_multicycle_path -hold -from [get_cells uart_tx_i0/uart_tx_ctl_i0/* -filter I
 <center>
 
 
+
 ![image](https://raw.githubusercontent.com/Bounce00/pic/master/fpga/timing_toturial49.png)
 
 </center>
@@ -1350,6 +1425,7 @@ set_multicycle_path -hold -from [get_cells uart_tx_i0/uart_tx_ctl_i0/* -filter I
 &emsp;&emsp;仅有的两个warning也只是说rst没有设置input_delay，spi_clk_pin没有设置output_delay，但我们已经对rst设置了伪路径，而spi_clk_pin是我们约束的输出时钟，无需设置output_delay。
 
 <center>
+
 
 
 ![image](https://raw.githubusercontent.com/Bounce00/pic/master/fpga/timing_toturial49.png)
@@ -1410,6 +1486,7 @@ end
 <center>
 
 
+
 ![image](https://raw.githubusercontent.com/Bounce00/pic/master/fpga/timing_toturial51.png)
 </center>
     
@@ -1418,12 +1495,14 @@ end
 
 <center>
 
+
 ![image](https://raw.githubusercontent.com/Bounce00/pic/master/fpga/timing_toturial52.png)
 </center>
 
 其中，选择时钟按钮会弹出一个新的窗口，如下图所示，我们只需根据时钟名字进行查找并选择即可。
 
 <center>
+
 
 
 ![image](https://raw.githubusercontent.com/Bounce00/pic/master/fpga/timing_toturial53.png)
@@ -1434,6 +1513,7 @@ end
 &emsp;&emsp;时序约束向导可以自动识别出未约束的主时钟，我们把wave_gen工程的xdc文件中对clk2的时钟约束注释掉，重新综合并实现后，打开时序约束向导，可以看到clk2被检测出未约束，点击编辑按钮，设置参数后就可完成约束。
 
 <center>
+
 
 
 ![image](https://raw.githubusercontent.com/Bounce00/pic/master/fpga/timing_toturial54.png)
@@ -1448,6 +1528,7 @@ end
 我们前面讲到过`get_pins`和`get_ports`的区别，而且我们也用过`get_cells`、`get_clocks`和`get_nets`这几个指令，下面就通过一张图直观展现它们的区别。
 
 <center>
+
 
 
 ![image](https://raw.githubusercontent.com/Bounce00/pic/master/fpga/timing_toturial55.png)
@@ -1470,6 +1551,7 @@ report_property $inst
 显示如下：
 
 <center>
+
 
 
 ![image](https://raw.githubusercontent.com/Bounce00/pic/master/fpga/timing_toturial56.png)
@@ -1504,6 +1586,7 @@ get_ports -filter {BUS_NAME != ""}
 <center>
 
 
+
 ![image](https://raw.githubusercontent.com/Bounce00/pic/master/fpga/timing_toturial57.png)
 </center>
 
@@ -1534,6 +1617,7 @@ get_cells -filter {REF_NAME == LUT3} *uart_tx_i0/*/*
 获取pin的property，如下：
 
 <center>
+
 
 
 ![image](https://raw.githubusercontent.com/Bounce00/pic/master/fpga/timing_toturial58.png)
@@ -1571,6 +1655,7 @@ get_pins -filter {DIRECTION == IN} cmd_parse_i0/*/*
 获取pin的property，如下：
 
 <center>
+
 
 
 ![image](https://raw.githubusercontent.com/Bounce00/pic/master/fpga/timing_toturial59.png)
@@ -1613,6 +1698,7 @@ get_nets -filter {PARENT_CELL == cmd_parse_i0} -hier *arg_cnt[*]
 <center>
 
 
+
 ![image](https://raw.githubusercontent.com/Bounce00/pic/master/fpga/timing_toturial60.png)
 </center>
 
@@ -1638,9 +1724,682 @@ get_clocks -of [get_pins clk_gen_i0/clk_core_i0/clk_rx]
 
 需要注意的是：
 
-  1. -hier不能和层次分隔符“/”同时使用，但“/”可出现在-filter中
-  2. 可根据属性过滤查找目标对象
-  3. -filter中的属性为：“==”（相等）、“!=”（不相等）、"=~"（匹配）、"!~"（不匹配），若有多个表达式，其返回值为bool类型时，支持逻辑操作（&& ||）
+    1. -hier不能和层次分隔符“/”同时使用，但“/”可出现在-filter中
+    2. 可根据属性过滤查找目标对象
+    3. -filter中的属性为：“==”（相等）、“!=”（不相等）、"=~"（匹配）、"!~"（不匹配），若有多个表达式，其返回值为bool类型时，支持逻辑操作（&& ||）
+
+
+
+
+
+# FPGA的虚拟时钟如何使用？
+
+&emsp;&emsp;在我之前写的FPGA时序约束教程中，有一篇中讲到了虚拟时钟：[时钟周期约束](https://zhuanlan.zhihu.com/p/88262316)，但文中对虚拟时钟的应用介绍的还不够详细，因此这里我们再对虚拟时钟做一个更加细致的介绍。
+
+&emsp;&emsp;首先，虚拟时钟用于什么地方？
+
+&emsp;&emsp;虚拟时钟通常用于设定输入和输出的延时，即`set_input_delay`和`set_output_delay`。可能有同学忘记这两个约束的用法了，这里我们再展示一下：
+
+```
+set_input_delay 0.5 -clock clkA [get_ports A]
+set_output_delay 1 -clock clkB [get_ports B]
+```
+
+其中`clkA`和`clkB`就是我们使用`create_clock`创建的主时钟或者虚拟时钟。
+
+&emsp;&emsp;主时钟在创建的时候需要指定时钟输入端口，虚拟时钟不需要指定端口，所以称之为虚拟时钟。那什么场景下要用到虚拟时钟呢？
+
+1. 外部IO的参考时钟并不是设计中的时钟
+
+下图中，外部IO的参考时钟比设计中主时钟的路径上多了一个BUFFER，因此我们需要使用虚拟时钟来进行约束。
+
+![image-20211206232557277](https://technomania.oss-cn-shanghai.aliyuncs.com/oss-cn-shanghaiimage-20211206232557277.png)
+
+```
+create_clock -name sysclk -period 10 [get_ports clkin]
+create_clock -name virtclk -period 10
+set_clock_latency -source 1 [get_clock virtclk]
+set_input_delay -clock virtclk -max 4 [get_ports dina]
+set_input_delay -clock virtclk -min 2 [get_ports dina]
+```
+
+
+
+2. FPGA I/O路径参考时钟来源于内部衍生时钟，但与主时钟的频率关系并不是整数倍
+
+如果I/O路径参考时钟源于内部的衍生时钟，那`set_input_delay`和`set_output_delay`约束中`-clock`参数后的时钟不能是衍生时钟，比如下图的例子中，输入10MHz时钟经过了MMCM后去采输入的数据。
+
+![image-20211206203529124](https://technomania.oss-cn-shanghai.aliyuncs.com/image-20211206203529124.png)
+
+a) 如果MMCM没有负的相移而且输出的频率也是10MHz，那么直接使用主时钟来约束input delay。
+
+```
+create_clock -period 100.000 -name clk [get_ports clk]
+set_input_delay -clock clk -max 2.000 [get_ports datain]
+set_input_delay -clock clk -min 1.000 [get_ports datain]
+```
+
+
+
+b) 如果MMCM输出频率是60MHz，那么这个衍生时钟跟主时钟并不是整数倍关系，这时就需要用到虚拟时钟了
+
+```
+create_clock -period 100.000 -name clk [get_ports clk] 
+create_clock -name clk_port_vclk -period 16.67
+set_input_delay -clock clk_port_vclk -max 2 [get_ports datain]
+set_input_delay -clock clk_port_vclk -min 1 [get_ports datain]
+```
+
+
+
+3. 在不修改时钟特性的情况下针对I/O指定不同的jitter和latency
+
+这个需求我们可以在`Constraints Wizards`中指定，简单又方便
+
+![image-20211206212729797](https://technomania.oss-cn-shanghai.aliyuncs.com/image-20211206212729797.png)
+
+
+
+在设置完成后，可以看到`Tcl Command Preview`中提示的约束指令。
+
+上面的内容基本都是来自Xilinx官方手册中的一些解释：
+
+![img](https://technomania.oss-cn-shanghai.aliyuncs.com/v2-336a21b5fa2962039209c6b555331e0e_720w.webp)
+
+下面我说一下自己对虚拟时钟的理解，一般来讲，用虚拟时钟约束的场景，很多都是可以通过其他约束来替代的。
+
+上面第一个场景，使用虚拟时钟可以更容易的指定时钟的相位和delay关系；不加虚拟时钟，我们也可以进行约束，只是input delay对应的时钟是sysclk；
+
+第二个场景中，如果MMCM输出时钟与主时钟的频率不是整数倍关系，那我们完全可以按照异步时钟的方式来设计和约束。
+
+
+
+# set_input_delay如何使用
+
+&emsp;&emsp;set_input_delay属于时序约束中的IO约束，我之前的时序约束教程中，有一篇关于set_input_delay的文章，但里面写的并不是很详细，今天我们就来详细分析一下，这个约束应该如何使用。
+
+[FPGA时序约束理论篇之IO约束](https://zhuanlan.zhihu.com/p/88186632)
+
+&emsp;&emsp;首先还是需要明确一点，这个约束没有延迟的作用，如果需要对输入信号做延迟，就要使用IODELAY这种原语。
+
+### 什么是input_delay？
+
+&emsp;&emsp;input_delay是指输入的数据到达FPGA的pad时相对于时钟边沿的延迟有多大，单位是ns，数值可以是正，也可以是负。
+
+![image-20220820220754710](https://technomania.oss-cn-shanghai.aliyuncs.com/image-20220820220754710.png)
+
+
+
+假设时钟是没有skew的，那么上图中的input_delay就等于`Clock to Out`+`Trace Dealy`，即上游器件的时钟到触发器输出的延时+PCB上的布线延迟，即`Tco+Tdelay`。
+
+
+
+但我们实际的应用，碰到的大多数情况都是随路时钟，也就是说上游器件输出数据的同时也会输出时钟给FPGA，就像下图所示：
+
+![image-20220821194158470](https://technomania.oss-cn-shanghai.aliyuncs.com/image-20220821194158470.png)
+
+
+
+### set_input_delay语法
+
+```
+set_input_delay [‑clock <args>] [‑reference_pin <args>] [‑clock_fall]
+    [‑rise] [‑fall] [‑max] [‑min] [‑add_delay] [‑network_latency_included]
+    [‑source_latency_included] [‑quiet] [‑verbose] <delay> <objects>
+```
+
+
+
+| Name                          | Description                                         |
+| ----------------------------- | --------------------------------------------------- |
+| `[-clock]`                    | Relative clock                                      |
+| `[-reference_pin]`            | Relative pin or port                                |
+| `[-clock_fall]`               | Delay is relative to falling edge of clock          |
+| `[-rise]`                     | Specifies rising delay                              |
+| `[-fall]`                     | Specifies falling delay                             |
+| `[-max]`                      | Specifies maximum delay                             |
+| `[-min]`                      | Specifies minimum delay                             |
+| `[-add_delay]`                | Don't remove existing input delay                   |
+| `[-network_latency_included]` | Specifies network latency of clock already included |
+| `[-source_latency_included]`  | Specifies source latency of clock already included  |
+| `[-quiet]`                    | Ignore command errors                               |
+| `[-verbose]`                  | Suspend message limits during command execution     |
+| `<delay>`                     | Delay value                                         |
+| `<objects>`                   | List of ports                                       |
+
+下面来详细说明一下：
+
+`-clock`：input_delay一般是相对时钟而言的，而且默认是相对于上升沿，我们可以通过`clock_fall`参数来指定下降沿，这里的时钟可以是虚拟时钟；
+
+`-reference_pin`：指定相对于某个pin上的时钟边沿，跟`-clock`的参数其实是一个意思，毕竟时钟也是通过pin输入进来的；
+
+`-clock_fall`：指定相对于时钟下降沿
+
+`-rise`：指定端口的上升转换的输入延迟
+
+`-fall`：指定端口的下降沿的输入延迟
+
+`-max`：最大延迟
+
+`-min`：最小延迟，我们做input delay主要就是约束这两个参数
+
+`-add_delay`：以增量的方式添加延迟，如果不加该参数，默认行为是替换现有的延时
+
+`-network_latency_included`：表示参考时钟的网络延迟也包含在延迟中
+
+`-source_latency_included`：跟上一个参数类似的含义，该参数表示时钟的源端延迟包含在延时中
+
+`-quiet`：忽略指令的错误信息，即便指令错了也依然返回TCL_OK
+
+`-verbose`：命令执行期间忽略消息数量的限制，就是说会返回该指令的所有的message
+
+`delay`：延迟值
+
+`objects`：端口列表
+
+
+
+### Vivado Timing Constraints Wizard
+
+很多约束时钟vivado中的`Timing Constraints Wizard`工具会方便很多，对于input delay的约束，界面如下：
+
+![image-20220904205339367](https://technomania.oss-cn-shanghai.aliyuncs.com/image-20220904205339367.png)
+
+
+
+我们需要设置的就是数据相对于时钟的最大和最小的延时，`trce_dly_min`和`trce_dly_max`是指布线的延迟，一般随路时钟跟数据都会采用等长布线的方式，因此可以设置为0即可。
+
+
+
+在设置完成后，下面的`Tcl Command Preview`中就会出现约束的tcl语法，这种方式对于该约束是很了解或者懒得手写约束的朋友来说非常的方便。
+
+![image-20220904205430995](https://technomania.oss-cn-shanghai.aliyuncs.com/image-20220904205430995.png)
+
+
+
+### Examples
+
+1.输入数据比时钟延迟3ns的delay：
+
+```
+create_clock -name clk -period 10 [get_ports clk_in]
+set_input_delay -clock clk 3 [get_ports DIN]
+```
+
+
+
+2.输入数据相对于时钟的下降沿有2ns的delay：
+
+```
+set_input_delay -clock_fall -clock clk 2 [get_ports DIN]
+```
+
+
+
+3.复位管脚相对于BUFG输出的时钟有2ns的delay：
+
+```
+set_input_delay -clock wbClk 2 -reference_pin [get_pin wbClk_IBUF_BUFG_inst/O] [get_ports reset]
+```
+
+
+
+4.时钟虚拟时钟的约束
+
+虚拟失踪的具体时钟方式可以参考另一篇文章
+
+外部IO的参考时钟比设计中主时钟的路径上多了一个BUFFER
+
+![image-20220904211616829](https://technomania.oss-cn-shanghai.aliyuncs.com/image-20220904211616829.png)
+
+```
+create_clock -name sysclk -period 10 [get_ports clkin]
+create_clock -name virtclk -period 10
+set_clock_latency -source 1 [get_clock virtclk]
+set_input_delay -clock virtclk -max 4 [get_ports dina]
+set_input_delay -clock virtclk -min 2 [get_ports dina]
+```
+
+
+
+5.双沿时钟的约束，对上升沿和下降沿都需要进行约束
+
+```
+create_clock -name clk_ddr -period 6 [get_ports DDR_CLK_IN]
+set_input_delay -clock clk_ddr -max 2.1 [get_ports DDR_IN]
+set_input_delay -clock clk_ddr -max 1.9 [get_ports DDR_IN] -clock_fall -add_delay
+set_input_delay -clock clk_ddr -min 0.9 [get_ports DDR_IN]
+set_input_delay -clock clk_ddr -min 1.1 [get_ports DDR_IN] -clock_fall -add_delay
+```
+
+
+
+### 具体案例
+
+比如某器件手册的输出时钟与数据的setup和hold要求如下图：
+
+![image-20220904232921974](https://technomania.oss-cn-shanghai.aliyuncs.com/image-20220904232921974.png)
+
+
+
+该时钟双沿采样，在时钟边沿到来后，结合input_delay的最大最小延迟的定义，可以知道：
+
+- 最小延迟就是hold time，因为如果比hold time还小了，那保持时间就不满足了，即1.2ns
+- 最大延迟是时钟周期-setup time，这里上下沿之间的间隔是4ns，因此max delay是2.8ns
+
+
+
+因此input delay的约束如下：
+
+```
+set_input_delay -clock [get_clocks rx_clk] -min 1.200 [get_ports RXD0] -add_delay
+set_input_delay -clock [get_clocks rx_clk] -min 1.200 [get_ports RXD1] -add_delay
+set_input_delay -clock [get_clocks rx_clk] -min 1.200 [get_ports RXD2] -add_delay
+set_input_delay -clock [get_clocks rx_clk] -min 1.200 [get_ports RXD3] -add_delay
+set_input_delay -clock [get_clocks rx_clk] -min 1.200 [get_ports RXC] -add_delay
+set_input_delay -clock [get_clocks rx_clk] -max 2.800 [get_ports RXD0] -add_delay
+set_input_delay -clock [get_clocks rx_clk] -max 2.800 [get_ports RXD1] -add_delay
+set_input_delay -clock [get_clocks rx_clk] -max 2.800 [get_ports RXD2] -add_delay
+set_input_delay -clock [get_clocks rx_clk] -max 2.800 [get_ports RXD3] -add_delay
+set_input_delay -clock [get_clocks rx_clk] -max 2.800 [get_ports RXC] -add_delay
+set_input_delay -clock [get_clocks rx_clk] -min 1.200 [get_ports RXD0] -clock_fall -add_delay
+set_input_delay -clock [get_clocks rx_clk] -min 1.200 [get_ports RXD1] -clock_fall -add_delay
+set_input_delay -clock [get_clocks rx_clk] -min 1.200 [get_ports RXD2] -clock_fall -add_delay
+set_input_delay -clock [get_clocks rx_clk] -min 1.200 [get_ports RXD3] -clock_fall -add_delay
+set_input_delay -clock [get_clocks rx_clk] -min 1.200 [get_ports RXC] -clock_fall -add_delay
+set_input_delay -clock [get_clocks rx_clk] -max 2.800 [get_ports RXD0] -clock_fall -add_delay
+set_input_delay -clock [get_clocks rx_clk] -max 2.800 [get_ports RXD1] -clock_fall -add_delay
+set_input_delay -clock [get_clocks rx_clk] -max 2.800 [get_ports RXD2] -clock_fall -add_delay
+set_input_delay -clock [get_clocks rx_clk] -max 2.800 [get_ports RXD3] -clock_fall -add_delay
+set_input_delay -clock [get_clocks rx_clk] -max 2.800 [get_ports RXC] -clock_fall -add_delay
+```
+
+
+
+因此，只要记住：
+
+- min_delay就是上游器件的hold time
+- max_delay是时钟周期-上游器件的setup time
+- 如果是双沿的话，就是半个时钟周期，而且还需要对时钟的下降沿进行约束
+
+
+
+# set_output_delay如何使用
+
+&emsp;&emsp;上一篇我们讲过set_input_delay：
+
+[set_input_delay如何使用?](https://zhuanlan.zhihu.com/p/561936760)
+
+
+
+### 什么是output_delay？
+
+顾名思义，output_delay就是指输出端口的数据相对于参数时钟边沿的延时。
+
+对于系统同步，FPGA和下游器件是同一个时钟源，output delay的设置方式如下图所示：
+
+![image-20220922214836390](https://technomania.oss-cn-shanghai.aliyuncs.com/image-20220922214836390.png)
+
+![image-20220923191831151](https://technomania.oss-cn-shanghai.aliyuncs.com/image-20220923191831151.png)
+
+
+
+对于我们常用的源同步场景，output delay的设置方式如下图所示：
+
+
+
+<img src="https://technomania.oss-cn-shanghai.aliyuncs.com/image-20220922215733011.png" alt="image-20220922215733011" style="zoom: 67%;" />
+
+
+
+![image-20220923191055430](https://technomania.oss-cn-shanghai.aliyuncs.com/image-20220923191055430.png)
+
+
+
+
+
+### set_output_delay语法
+
+```
+set_output_delay [‑clock <args>] [‑reference_pin <args>] [‑clock_fall]
+    [‑rise] [‑fall] [‑max] [‑min] [‑add_delay] [‑network_latency_included]
+    [‑source_latency_included] [‑quiet] [‑verbose] <delay> <objects>
+```
+
+
+
+| Name                          | Description                                         |
+| ----------------------------- | --------------------------------------------------- |
+| `[-clock]`                    | Relative clock                                      |
+| `[-reference_pin]`            | Relative pin or port                                |
+| `[-clock_fall]`               | Delay is relative to falling edge of clock          |
+| `[-rise]`                     | Specifies rising delay                              |
+| `[-fall]`                     | Specifies falling delay                             |
+| `[-max]`                      | Specifies maximum delay                             |
+| `[-min]`                      | Specifies minimum delay                             |
+| `[-add_delay]`                | Don't remove existing input delay                   |
+| `[-network_latency_included]` | Specifies network latency of clock already included |
+| `[-source_latency_included]`  | Specifies source latency of clock already included  |
+| `[-quiet]`                    | Ignore command errors                               |
+| `[-verbose]`                  | Suspend message limits during command execution     |
+| `<delay>`                     | Delay value                                         |
+| `<objects>`                   | List of ports                                       |
+
+下面来详细说明一下：
+
+`-clock`：input_delay一般是相对时钟而言的，而且默认是相对于上升沿，我们可以通过`clock_fall`参数来指定下降沿，这里的时钟可以是虚拟时钟；
+
+`-reference_pin`：指定相对于某个pin上的时钟边沿，跟`-clock`的参数其实是一个意思，毕竟时钟也是通过pin输入进来的；
+
+`-clock_fall`：指定相对于时钟下降沿
+
+`-rise`：指定端口的上升转换的输入延迟
+
+`-fall`：指定端口的下降沿的输入延迟
+
+`-max`：最大延迟
+
+`-min`：最小延迟，我们做input delay主要就是约束这两个参数
+
+`-add_delay`：以增量的方式添加延迟，如果不加该参数，默认行为是替换现有的延时
+
+`-network_latency_included`：表示参考时钟的网络延迟也包含在延迟中
+
+`-source_latency_included`：跟上一个参数类似的含义，该参数表示时钟的源端延迟包含在延时中
+
+`-quiet`：忽略指令的错误信息，即便指令错了也依然返回TCL_OK
+
+`-verbose`：命令执行期间忽略消息数量的限制，就是说会返回该指令的所有的message
+
+`delay`：延迟值
+
+`objects`：端口列表
+
+
+
+### Vivado Timing Constraints Wizard
+
+还是一样通过Vivado的`Timing Constraints Wizard`工具来进行约束会方便很多：
+
+<img src="https://technomania.oss-cn-shanghai.aliyuncs.com/image-20220923193857131.png" alt="image-20220923193857131" style="zoom:67%;" />
+
+
+
+对应的约束如下：
+
+```
+set_output_delay -clock [get_clocks {clk}] -min -add_delay -1.0 [get_ports {led[*]}]
+set_output_delay -clock [get_clocks {clk}] -max -add_delay 2.0 [get_ports {led[*]}]
+```
+
+可以看出，对于源同步系统，output delay其实就是下游器件的建立时间和保持时间的要求。
+
+
+
+
+
+### Examples
+
+1.输出数据比时钟延迟3ns的delay：
+
+```
+create_clock -name clk -period 10 [get_ports clk_in]
+set_output_delay -clock clk 3 [get_ports DOUT]
+```
+
+
+
+2.输入数据相对于时钟的下降沿有2ns的delay：
+
+```
+set_output_delay -clock_fall -clock clk 2 [get_ports DOUT]
+```
+
+
+
+3.设置延迟5ns，同时参数时钟的网络延迟也包含在内：
+
+```
+set_output_delay 5.0 -clock clk -network_latency_included [get_ports DOUT]
+```
+
+
+
+4.双沿时钟的约束，对上升沿和下降沿都需要进行约束
+
+```
+create_clock -name clk_ddr -period 6 [get_ports DDR_CLK_OUT]
+set_output_delay -clock clk_ddr -max 2.1 [get_ports DDR_OUT]
+set_output_delay -clock clk_ddr -max 1.9 [get_ports DDR_OUT] -clock_fall -add_delay
+set_output_delay -clock clk_ddr -min 0.9 [get_ports DDR_OUT]
+set_output_delay -clock clk_ddr -min 1.1 [get_ports DDR_OUT] -clock_fall -add_delay
+```
+
+
+
+### 具体案例
+
+比如某器件手册的输出时钟与数据的setup和hold要求如下图：
+
+<img src="https://technomania.oss-cn-shanghai.aliyuncs.com/image-20220924170803202.png" alt="image-20220924170803202" style="zoom:67%;" />
+
+
+
+该时钟双沿采样，在时钟边沿到来后，结合output_delay的最大最小延迟的定义，可以知道：
+
+- 最大延迟为Tsetup
+- 最小延迟为-Thold
+
+但需要注意的是，输出延迟的时钟位置，一般输出时钟都会经过一级BUFG，再作为数据的随路时钟输出，那我们就需要在输出的pad上先create_generate一个时钟，然后output delay是相对于该时钟进行的。
+
+![image-20220924171932035](https://technomania.oss-cn-shanghai.aliyuncs.com/image-20220924171932035.png)
+
+因此output delay的约束如下：
+
+```
+crate_clock -name clk_in -period 10 [get_ports clk_p]
+create_generated_clock -name {tx_clk} -source [get_ports {clk_tx}] -multiply_by 1 -divide_by 1 {get_ports clk_p} -master_clock [get_clocks {clk_in}] -add_delay
+set_output_delay -clock [get_clocks clk_tx] -min -0.8 [get_ports DOUT] -add_delay
+set_output_delay -clock [get_clocks clk_tx] -max 1.0 [get_ports DOUT] -add_delay
+set_output_delay -clock [get_clocks clk_tx] -min -0.8 [get_ports DOUT] -clock_fall -add_delay
+set_output_delay -clock [get_clocks clk_tx] -max 1.0 [get_ports DOUT] -clock_fall -add_delay
+```
+
+
+
+因此，只要记住：
+
+- min_delay就是下游器件的 -hold time
+- max_delay是下游器件的setup time
+- 如果是双沿的话，就是半个时钟周期，而且还需要对时钟的下降沿进行约束
+
+
+
+# set_input_delay中-add_delay的作用
+
+在设置input_delay时，我们经常会使用下面的方式：
+
+```
+set_input_delay -clock clk -min 2 [get_ports data_in]
+set_input_delay -clock clk -max 4 [get_ports data_in]
+```
+
+
+
+但有时也会在后面增加一个`-add_delay`的参数：
+
+```
+set_input_delay -clock clk -max 2.1 [get_ports data_in]
+set_input_delay -clock clk -max 1.9 [get_ports data_in] -clock_fall -add_delay
+set_input_delay -clock clk -min 0.9 [get_ports data_in]
+set_input_delay -clock clk -min 1.1 [get_ports data_in] -clock_fall -add_delay
+```
+
+
+
+在默认情况下，一个port只需要一个min和max的dealy值，如果我们设置两次，那么第二次设置的值会覆盖第一次的值：下面的第一行就无效了。
+
+```
+set_input_delay -clock clk -max 2.1 [get_ports data_in]
+set_input_delay -clock clk -max 2.5 [get_ports data_in]
+```
+
+
+
+但如果是加了`-add_delay`参数，就可以多个约束同时存在：
+
+```
+set_input_delay -clock clk -max 2.1 [get_ports data_in]
+set_input_delay -clock clk -max 2.5 [get_ports data_in] -add_delay
+```
+
+但其实，第一行也是无效的，因此2.5比2.1要大，如果满足2.5了，那一定满足2.1。
+
+
+
+因此，`-add_delay`参数一般都是用于双沿采样的场景：
+
+```
+set_input_delay -clock clk -max 2.1 [get_ports data_in]
+set_input_delay -clock clk -max 1.9 [get_ports data_in] -clock_fall -add_delay
+```
+
+如果不增加`-add_delay`参数，那么第二条会覆盖第一条约束，那么上升沿的约束就没有了。
+
+
+
+在UG903中，也有下面的描述：
+
+```
+Add Delay Input Delay Command Option
+The -add_delay option must be used if:
+• A max (or min) input delay constraint exists, and
+• You want to specify a second max (or min) input delay constraint on the same port.
+This option is commonly used to constrain an input port relative to more than one clock 
+edge, as, for example, DDR interface
+```
+
+
+
+
+
+# 经过时钟选择器该怎么约束
+
+我们先看UG949中举的例子：
+
+时序场景如下图所示，clk0和clk1两个时钟输入，经过BUFGMUX后，输出到后面的逻辑，但同时clk0和clk1还分别驱动了其他逻辑。
+
+
+
+<img src="https://technomania.oss-cn-shanghai.aliyuncs.com/image-20231211103216360.png" alt="image-20231211103216360" style="zoom:80%;" />
+
+
+
+此时，如果路径A/B/C都不存在，其中A路径表示clk0与选择器输出的时钟之间的数据交互，B路径表示clk1与选择器输出的时钟之间的数据交互，C路径表示clk0和clk1之间的数据交互，那么使用下面的约束就可以了：
+
+```
+set_clock_groups -logically_exclusive -group clk0 -group clk1
+```
+
+
+
+如果clk0和clk1之间有数据交互，则需要使用下面的约束：
+
+```
+create_generated_clock -name clk0mux -divide_by 1 \
+                       -source [get_pins mux/I0] [get_pins mux/O] 
+create_generated_clock -name clk1mux -divide_by 1 \
+                       -add -master_clock clk1 \
+                       -source [get_pins mux/I1] [get_pins mux/O] 
+set_clock_groups -physically_exclusive -group clk0mux -group clk1mux
+```
+
+
+
+这里我们解释一下`logically_exclusive`和`physically_exclusive`的区别：
+
+- -logical_exclusive
+
+  ```
+  logical_exclusive is used for two clocks that are defined on different source roots.
+  Logically exclusive clocks do not have any functional paths between them, but might have coupling interactions with each other.
+  An example of logically exclusive clocks is multiple clocks, which are selected by a MUX but can still interact through coupling upstream of the MUX cell.
+  When there are physically existing but logically false paths between the two clocks, use "set_clock_groups -logical_exclusive".
+  ```
+
+- -physical_exclusive
+
+  ```
+  physical_exclusive is used for two clocks that are defined on the same source root by "create_clock -add".
+  Timing paths between these two clocks do not physically exist.
+  As a result you will need to use "set_clock_groups -physical_exclusive" to set them as false paths.
+  ```
+
+简而言之，logical_exclusive用于选择器的电路，两个时钟的source不一样；而physical_exclusive两个时钟的source是一样，比如在同一个时钟输入口，但可能会输入两个不同的时钟。
+
+下面我们来看下为什么要这样约束。
+
+我们先来复习一下set_clock_groups的用法，set_clock_groups后面可以加的参数有三个，除了`logically_exclusive`和`physically_exclusive`，还有我们最常用的`-asynchronous`，无论后面是哪个参数，set_clock_groups就是让工具不去分析我们后面约束的时钟组，只是这三个参数的应用场景略有不同。
+
+在第一个场景中，clk0和clk1之间没有数据交互，因此工具不需要分析它们之间的路径，而且它们后面有时钟选择器，符合logical_exclusive的使用场景，因此约束是
+
+```
+set_clock_groups -logically_exclusive -group clk0 -group clk1
+```
+
+
+
+在第二个场景中，clk0和clk1之间是有数据交互的，就不能直接把这个时钟设置clock group，但经过MUX之后的时钟，只会有一个存在，这两个时钟之间肯定是不存在交互的，所以这两个时钟需要设置clock group，而这两个时钟有`same source root`，因此使用的参数是physical_exclusive。
+
+
+
+有同学可能会问，对于第一个场景，MUX之后的时钟也是只存在一个，为什么不需要再分别generate clock，然后设置physical_exclusive呢？
+
+我个人理解，这就跟时钟传播有关系，什么情况下时钟不向后传播：
+
+```
+The source latency paths do not flow through sequential element clock pins, transparent latch data pins, or source pins of other generated clocks.
+```
+
+选择器既不是sequential element，也不是latch，因此只要我们后面没有create generated clock，那么时序路径就可以继续向后传播，我们已经设置了前面的两个时钟的logically_exclusive，因此后面的电路，只要时钟路径没有断，那就都存在logically_exclusive。
+
+
+
+需要注意一点：**create_clock或者create_generated_clock之后，原来在当前点传播的clk不在向后传播**
+
+因此，针对上面的电路，假设clk0和clk1之间有数据交互，我们还可以用下面的方法约束：
+
+<img src="https://technomania.oss-cn-shanghai.aliyuncs.com/image-20231219110907726.png" alt="image-20231219110907726" style="zoom:80%;" />
+
+
+
+在pinI0和pinI1处，我们create一个generated_clock，这样clk0和clk1就不再向mux传播，但FD0和FD1仍然是clk0和clk1所在的时钟路径。(下面默认clk0和clk1已经create)
+
+```
+create_generated_clock -name clk_I0 \
+                      [get_pins mux/I0] \
+                      -master_clock clk0 \
+                      -divide_by 1 \
+                      -source [get_ports pinclk0] \
+                      -add
+create_generated_clock -name clk_I1 \
+                      [get_pins mux/I1] \
+                      -master_clock clk1 \
+                      -divide_by 1 \
+                      -source [get_ports pinclk1] \
+                      -add
+ 
+set_clock_groups -logically_exclusive -group clk_I0 -group clk_I1
+```
+
+
+
+在网上还看到有个说法，而且已经经过了DC工具的验证：set_clock_groups的三个参数asynchronous、logically_exclusive和physically_exclusive的实际作用是一样的，都是设成异步，因此上面的约束中，这三个参数可以随便用。
+
+***但是既然工具给出了三种参数的使用场景，那我们就应该按照场景来使用这三个参数。***
+
+
+
 
 
 
